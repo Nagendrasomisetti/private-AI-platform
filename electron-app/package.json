@@ -1,0 +1,161 @@
+{
+  "name": "privai-desktop",
+  "version": "1.0.0",
+  "description": "PrivAI Desktop Application - Privacy-first AI for Education",
+  "main": "src/main.js",
+  "homepage": "./",
+  "author": {
+    "name": "PrivAI Team",
+    "email": "support@privai.app"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "concurrently \"npm run start-backend\" \"npm run start-frontend\" \"wait-on http://localhost:3000 && electron .\"",
+    "start-backend": "cd ../backend && python -m app.main_simple",
+    "start-frontend": "cd ../frontend && npm start",
+    "build": "npm run build-frontend && npm run build-backend && electron-builder",
+    "build-frontend": "cd ../frontend && npm run build",
+    "build-backend": "cd ../backend && python -m pip install -r requirements.txt",
+    "dist": "npm run build && electron-builder --publish=never",
+    "dist-win": "npm run build && electron-builder --win --publish=never",
+    "dist-mac": "npm run build && electron-builder --mac --publish=never",
+    "dist-linux": "npm run build && electron-builder --linux --publish=never",
+    "pack": "npm run build && electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps",
+    "rebuild": "electron-rebuild",
+    "test": "jest",
+    "lint": "eslint src/",
+    "clean": "rimraf dist build"
+  },
+  "build": {
+    "appId": "com.privai.desktop",
+    "productName": "PrivAI Desktop",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "src/**/*",
+      "build/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend",
+        "to": "backend",
+        "filter": ["**/*", "!**/node_modules/**", "!**/__pycache__/**", "!**/venv/**"]
+      },
+      {
+        "from": "../frontend/build",
+        "to": "frontend"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64", "ia32"]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "publisherName": "PrivAI Team",
+      "verifyUpdateCodeSignature": false
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.education",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "assets/entitlements.mac.plist",
+      "entitlementsInherit": "assets/entitlements.mac.plist"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "rpm",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "category": "Education",
+      "desktop": {
+        "Name": "PrivAI Desktop",
+        "Comment": "Privacy-first AI for Education",
+        "Keywords": "ai;education;privacy;local",
+        "StartupWMClass": "privai-desktop"
+      }
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "PrivAI Desktop"
+    },
+    "dmg": {
+      "title": "PrivAI Desktop Installer",
+      "icon": "assets/icon.icns",
+      "background": "assets/dmg-background.png",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "privai-team",
+      "repo": "privai-desktop"
+    }
+  },
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4",
+    "electron-rebuild": "^3.2.9",
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.2.0",
+    "rimraf": "^5.0.5",
+    "jest": "^29.7.0",
+    "eslint": "^8.57.0"
+  },
+  "dependencies": {
+    "electron-updater": "^6.1.4",
+    "electron-store": "^8.1.0",
+    "node-fetch": "^3.3.2"
+  }
+}

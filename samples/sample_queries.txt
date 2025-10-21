@@ -1,0 +1,12 @@
+List students with unpaid fees this semester
+Summarize placement feedback 2024
+Generate NAAC report summary for criteria X
+List top 10 students by marks in CS
+Summarize student complaints in last semester
+
+# Optional alternates you can try:
+Which students have pending fees in Spring 2025?
+Give a brief summary of placement feedback for 2024.
+Create a concise NAAC criteria X overview.
+Show top ten CS scorers by marks.
+Summarize key complaints from the previous semester.

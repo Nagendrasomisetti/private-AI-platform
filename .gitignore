@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+*.so
+
+# Node
+node_modules/
+/dist/
+/build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build and binary files
+/installers/build/
+*.exe
+*.dmg
+*.app
+
+# Data and model files
+backend/data/faiss_index/*
+backend/uploads/*
+*.bin
+*.pt
+*.pth
+*.onnx
+*.h5
+
+# Keep empty dirs
+!backend/data/faiss_index/.gitkeep
+!backend/uploads/.gitkeep

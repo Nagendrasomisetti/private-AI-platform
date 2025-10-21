@@ -1,0 +1,69 @@
+version: "3.9"
+
+# PrivAI MVP docker-compose
+# - backend: FastAPI API on port 8000
+# - frontend: React app on port 3000 (served by node dev server or nginx in prod)
+# Volumes persist uploads and FAISS index locally
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: privai-backend
+    # Map API port to host
+    ports:
+      - "8000:8000"
+    # Mount local directories for persistence and rapid iteration
+    volumes:
+      # Persist uploaded files between container restarts
+      - ./backend/uploads:/app/uploads
+      # Persist FAISS vector DB index
+      - ./backend/data/faiss_index:/app/data/faiss_index
+      # Optionally mount source for live dev (comment out in prod)
+      # - ./backend:/app
+    environment:
+      # Database credentials (read-only recommended)
+      - DB_URL=${DB_URL}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      # App settings
+      - PRIVAI_APP_NAME=PrivAI
+      - PRIVAI_APP_VERSION=1.0.0
+      - PRIVAI_DEBUG=${PRIVAI_DEBUG:-false}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    # Healthcheck uses backend /health endpoint
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  frontend:
+    # Simple Node-based dev server for React (CRA). For production, build and serve with nginx.
+    image: node:18-alpine
+    container_name: privai-frontend
+    working_dir: /app
+    # Mount the frontend source for live development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    # Expose the dev server port
+    ports:
+      - "3000:3000"
+    environment:
+      # Point frontend API to backend service (Docker network DNS name)
+      - REACT_APP_API_URL=http://backend:8000
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      backend:
+        condition: service_healthy
+    command: sh -c "npm install && npm start"
+
+# Named volumes (optional if you prefer not to bind host directories)
+# volumes:
+#   uploads:
+#   faiss_index:
